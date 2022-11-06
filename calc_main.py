@@ -1,10 +1,22 @@
 from tkinter import Tk, Button, Label
 from functools import partial
-
+import operator
 window = Tk()
 window.config(background='black')
 # window.minsize(width=500, height=200)
 
+# global Flag. If flag is True = count everything
+global flag
+flag = False
+
+# operators dict
+
+stored_operators = {
+    '+': operator.add,
+    '-': operator.sub,
+    '*': operator.mul,
+    '/': operator.truediv,
+    }
 
 # Dict to put number in a right order. Because started with 9 in for loop creating buttons.
 test_dict = {0: 9,
@@ -35,16 +47,22 @@ def adding_numbers(button_id):
 
 
 def take_action(act_id):
+    global flag
     """
     Takes a symbol of an action. Checks if action symbol already was used.
     Also, addition and substruction to a zero.
     """
+    if flag:
+        equal_action()
+
     if not text_entry['text'].endswith(' ') and text_entry['text'] != '0':
         text_entry.config(text=text_entry['text'] + f' {act_id} ')
+        flag = True
     elif text_entry['text'] == '0':
         # We still can use '+' and '-' with zero;
         if act_id == '+' or act_id == '-':
             text_entry.config(text=text_entry['text'] + f' {act_id} ')
+            flag = True
 
 
 def start_over():
@@ -60,54 +78,56 @@ def equal_action():
     """
     summary = 0
     result = text_entry['text'].split()
-    try:
-        int(result[-1])
-    except ValueError:
-        del result[-1]
+    counter_result = (stored_operators[result[1]](int(result[0]), int(result[2])))
+    text_entry.config(text=str(counter_result))
+    # try:
+    #     int(result[-1])
+    # except ValueError:
+    #     del result[-1]
 
     # Checks if *+-/ . Changing both numbers and moves on.
     """
     Very effective code :)
     """
-    maximum = 0
-    number_counter = 0
-
-    # * /
-    for zxc in range(len(result)):
-
-        if result[zxc] == '*' or result[zxc] == '/':
-            if result[zxc] == '*':
-                number_counter = int(result[zxc + 1]) * int(result[zxc - 1])
-                result[zxc + 1] = number_counter
-                result[zxc - 1] = number_counter
-                # del result[zxc]
-                # del result[zxc - 1]
-            elif result[zxc] == '/':
-                number_counter = int(result[zxc - 1]) / int(result[zxc + 1])
-                result[zxc + 1] = number_counter
-                result[zxc - 1] = number_counter
-                # del result[zxc]
-                # del result[zxc - 1]    # + -
-            if number_counter > maximum:
-                maximum = number_counter
-    for asd in range(len(result)):
-        if result[asd] == '+' or result[asd] == '-':
-            if result[asd] == '+':
-                number_counter = int(result[asd + 1]) + int(result[asd - 1])
-                result[asd + 1] = number_counter
-                result[asd - 1] = number_counter
-                # del result[asd]
-                # del result[asd - 1]
-            elif result[asd] == '-':
-                number_counter = int(result[asd - 1]) - int(result[asd + 1])
-                result[asd + 1] = number_counter
-                result[asd - 1] = number_counter
-                # del result[asd]
-                # del result[asd - 1]
-            if number_counter > maximum:
-                maximum = number_counter
-    # text_entry.config(text=result)
-    text_entry.config(text=str(maximum))
+    # maximum = 0
+    # number_counter = 0
+    #
+    # # * /
+    # for zxc in range(len(result)):
+    #
+    #     if result[zxc] == '*' or result[zxc] == '/':
+    #         if result[zxc] == '*':
+    #             number_counter = int(result[zxc + 1]) * int(result[zxc - 1])
+    #             result[zxc + 1] = number_counter
+    #             result[zxc - 1] = number_counter
+    #             # del result[zxc]
+    #             # del result[zxc - 1]
+    #         elif result[zxc] == '/':
+    #             number_counter = int(result[zxc - 1]) / int(result[zxc + 1])
+    #             result[zxc + 1] = number_counter
+    #             result[zxc - 1] = number_counter
+    #             # del result[zxc]
+    #             # del result[zxc - 1]    # + -
+    #         if number_counter > maximum:
+    #             maximum = number_counter
+    # for asd in range(len(result)):
+    #     if result[asd] == '+' or result[asd] == '-':
+    #         if result[asd] == '+':
+    #             number_counter = int(result[asd + 1]) + int(result[asd - 1])
+    #             result[asd + 1] = number_counter
+    #             result[asd - 1] = number_counter
+    #             # del result[asd]
+    #             # del result[asd - 1]
+    #         elif result[asd] == '-':
+    #             number_counter = int(result[asd - 1]) - int(result[asd + 1])
+    #             result[asd + 1] = number_counter
+    #             result[asd - 1] = number_counter
+    #             # del result[asd]
+    #             # del result[asd - 1]
+    #         if number_counter > maximum:
+    #             maximum = number_counter
+    # # text_entry.config(text=result)
+    # text_entry.config(text=str(maximum))
 
 
 # Header. Numbers storage
